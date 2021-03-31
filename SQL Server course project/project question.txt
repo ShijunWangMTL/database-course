@@ -1,0 +1,32 @@
+Project
+
+NOTE: In this project statement, there are maybe some requirements that have not been covered during the course lectures or assignments. Please refer to the T-SQL manual that has been provided on Moodle, or online MSDN to know how to perform them if any.
+
+ 
+PROJECT GOAL:
+
+The goal is to create a table and then add a Stored Procedure to do a given query.
+Steps to do:
+
+1. using T-SQL statements create a table with the following fields. To avoid error, before the table creation, check if it doesn't exist, then create it. otherwise, delete it then create it.
+The fields are:
+
+    InvoiceNumber int,
+    InvoiceDate date (can be varchar too),
+    InvoiceTotal int,
+    CreditTotal int,
+    PaymentTotal int
+
+2. Create an excel sheet that contains some dummy data according to the above field types. Insert the values in your table.
+
+3. Create a stored procedure named spDateRange that,
+
+    it accepts two parameters, @DateMin, and @DateMax, with the default value null.
+    If the stored procedure gets called with no parameters or with null values, raise an error that describes the invalid syntax. (Hint: to raise and error open the document and search for 'raise error'.)
+    If called with non-null values, validate the parameters. Test that @DateMin is earlier than @DateMax.
+    If the parameters are valid, return a result set that includes the InvoiceNumber, InvoiceDate, InvoiceTotal, and Balance for each invoice for which the InvoiceDate is within the daterange, sorted with the earliest invoice first. Balance is calulated as InvoiceTotal minus PaymentTotal minus CreditTotal.
+    Code a call to the above procedure that returns invoices with an InvoiceDate between April 10 and April 20, 2020. This call should also catch any errors that are raised by the procedure and print the error number and description.
+
+Submission
+
+Please submit your SQL code as well as a video that you explain your methodology to solve this problem and also demonstrate the results when you executing your query.

@@ -1,0 +1,156 @@
+[ CASE sensative ]
+***************************************
+insert
+***************************************
+db.inventory.insertOne(
+   {item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" }
+);
+
+db.inventory.insertMany([
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+   { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
+   { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" }
+]);
+
+db.inventory.insert(
+   { item: "canvas", qty: 100, tags: ["cotton"], size: { h: 28, w: 35.5, uom: "cm" } }
+);
+
+db.inventory.insert([
+   { item: "journal", qty: 25, tags: ["blank", "red"], size: { h: 14, w: 21, uom: "cm" } },
+   { item: "mat", qty: 85, tags: ["gray"], size: { h: 27.9, w: 35.5, uom: "cm" } },
+   { item: "mousepad", qty: 25, tags: ["gel", "blue"], size: { h: 19, w: 22.85, uom: "cm" } }
+]);
+
+document=([
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+   { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
+   { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" }
+]);
+
+db.inventory.insert(document);
+
+***************************************
+query
+***************************************
+db.inventory.find() 
+db.inventory.find({})   
+	find all records in specified collection
+
+db.inventory.find().pretty();
+	display the results in an easy-to-read format
+
+db.inventory.findOne();
+	is find() with a limit of 1 record
+
+db.inventory.find( { status: "D" } )
+
+db.inventory.find( { status: "A", qty: { $lt: 30 } } )
+
+db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 } } ] } )
+
+***************************************
+update
+db.collection.updateOne();
+db.collection.updateMany();
+db.collection.replaceOne();
+db.collection.update();
+***************************************
+db.inventory.insertMany( [
+   { item: "canvas", qty: 100, size: { h: 28, w: 35.5, uom: "cm" }, status: "A" },
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "mat", qty: 85, size: { h: 27.9, w: 35.5, uom: "cm" }, status: "A" },
+   { item: "mousepad", qty: 25, size: { h: 19, w: 22.85, uom: "cm" }, status: "P" },
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "P" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+   { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
+   { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" },
+   { item: "sketchbook", qty: 80, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "sketch pad", qty: 95, size: { h: 22.85, w: 30.5, uom: "cm" }, status: "A" }
+] );
+
+db.inventory.updateOne(
+   { item: "paper" },
+   {$set: { "size.uom": "cm", status: "P" }}
+)
+
+####updateOne operation will update the document by setting the specific fields with atomic operator $set.
+which means, the rest of the fields will remain same. 
+If more than one documents are found, only the first one will be updated.
+#### upsert option offers a function that, if no documents match the filter, the operation will create  a new document and insert it. the default value is false, so if we omit/e mit/ the upsert option, the new document won't be created.
+
+db.inventory.updateOne(
+   { item: "papier" },
+   {$set: { "size.uom": "cm", status: "P" }},
+   {upsert: true}
+)
+
+db.inventory.updateMany(
+   { "qty": { $lt: 50 } },
+   {$set: { "size.uom": "in", status: "B" }},
+)
+
+db.inventory.updateMany(
+   { "qty": { $lt: 5 } },
+   {$set: { "size.uom": "in", status: "B" }},
+   {upsert: true}
+)
+
+db.inventory.replaceOne(
+   { item: "paper" },
+   { item: "paper", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 40 } ] }
+)
+db.inventory.find()
+
+db.inventory.replaceOne(
+   { item: "papers" },
+   { item: "papers", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 40 } ] },
+   {upsert: true}
+)
+
+#### update can use either $set operation, or insert the entire document to replace the old one.
+it also works with upsert option to insert  a new document if nothing found by the filter.
+
+db.inventory.update(
+   { item:"envelop" },
+   { item:" envelop ", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 40 } ] },
+   {upsert: true}
+);
+
+db.inventory.update(
+   { qty: 25 },
+   {$set: { "size.uom": "mm", status: "B" }},
+   {multi: true}
+)
+
+***************************************
+delete
+***************************************
+db.inventory.insert([
+   { item: "journal", qty: 25, tags: ["blank", "red"], size: { h: 14, w: 21, uom: "cm" } },
+   { item: "notebook", qty: 25, tags: ["blank", "red"], size: { h: 14, w: 21, uom: "cm" } },
+   { item: "mat", qty: 25, tags: ["gray"], size: { h: 27.9, w: 35.5, uom: "cm" } },
+   { item: "paper", qty: 25, tags: ["blank", "red"], size: { h: 14, w: 21, uom: "cm" } },
+   { item: "mousepad", qty: 25, tags: ["gel", "blue"], size: { h: 19, w: 22.85, uom: "cm" } }
+]);
+
+db.inventory.deleteOne( { qty: 25 } );
+
+db.inventory.deleteMany( { qty: 25 } );
+
+db.inventory.deleteMany({ });
+
+db.inventory.remove( {qty: 25 }, {justOne: true} );
+db.inventory.remove( {qty: 25 }, {justOne: 1} );
+db.inventory.remove( {qty: 25 } );
+
+
+
+
+
+
+
+
